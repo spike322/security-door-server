@@ -1,0 +1,28 @@
+{
+  "name": "secure-door-server",
+  "version": "1.0.0",
+  "description": "Server for the secure door IoT application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "localStart": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spike322/secure-door-server.git"
+  },
+  "author": "Mauro Borrazzo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spike322/secure-door-server/issues"
+  },
+  "homepage": "https://github.com/spike322/secure-door-server#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.7",
+    "express": "^4.17.1",
+    "pg": "^7.15.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
