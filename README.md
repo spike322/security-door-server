@@ -17,7 +17,7 @@ The server will be listening on port 3000
 
 In dumpDB folder you will find a dump.tar file in which is contained the database backup.
 
-In oorder to restore it with data, first extract dump.tar, and then run this command
+In order to restore it with data, first extract dump.tar, and then run this command
 
     pg_restore -h localhost -d see4me dump.tar -U root
 
