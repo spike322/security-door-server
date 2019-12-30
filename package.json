@@ -19,9 +19,15 @@
   "homepage": "https://github.com/spike322/secure-door-server#readme",
   "dependencies": {
     "bcrypt": "^3.0.7",
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "pg": "^7.15.1"
+    "morgan": "~1.9.1",
+    "mqtt": "^2.18.8",
+    "pg": "^7.15.1",
+    "pug": "^2.0.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
