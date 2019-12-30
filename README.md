@@ -19,12 +19,12 @@ In dumpDB folder you will find a dump.tar file in which is contained the databas
 
 In order to restore it with data, first extract dump.tar, and then run this command
 
-    pg_restore -h localhost -d see4me dump.tar -U root
+    pg_restore -h localhost -d secure_door dump.tar -U root
 
 To restore it without data, first extract dump.tar, and then run this command
 
-    psql -h localhost -U root see4me < dump.sql
+    psql -h localhost -U root secure_door < dump.sql
 
 To backup the database run the command written down below
 
-    pg_dump -h localhost -U root -F t see4me > dump.tar
+    pg_dump -h localhost -U root -F t secure_door > dump.tar
