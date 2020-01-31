@@ -14,6 +14,11 @@ module.exports = function(app) {
         .get(controller.getUsersById)
         .delete(controller.deleteUser);
 
+
+    /*app.route('/users/enter').post(async (req, res) => {
+        const access = await controller.enter(req.body.uid)
+        .then(function() { res.send({access: 'ok'}); });
+    });*/
     app.route('/users/enter')
         .post(controller.enter);
 };

@@ -9,9 +9,16 @@ var client = mqtt.connect('mqtt://tailor.cloudmqtt.com', options);
 
 client.on('connect', function () {
     console.log('connected');
-    client.subscribe('presence', function (err) {
+    client.subscribe('access/response', function (err) {
         if (!err) {
-          client.publish('presence', 'Hello mqtt')
+          client.publish('access/response', 'Hello mqtt')
+          console.log('published!')
         }
     })
+});
+
+client.on('message', function (topic, message) {
+    // message is Buffer
+    console.log(message.toString())
+    client.end()
 });

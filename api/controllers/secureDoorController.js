@@ -9,6 +9,7 @@ const pool = Pool.pool
 
 exports.createUser = async function(request, response) {
   const administrator = (request.body.administrator == trueValue) ? true : false ;
+  const uid = request.body.uid;
   var hashedUid
   
   try {
@@ -18,7 +19,7 @@ exports.createUser = async function(request, response) {
     response.status(500).send()
   }
 
-  pool.query('INSERT INTO public."user" VALUES (\'' + hashedUid + '\', DEFAULT, \'' + administrator + '\') RETURNING *', (error, results) => {
+  pool.query('INSERT INTO public."user" VALUES (\'' + uid + '\', DEFAULT, \'' + administrator + '\') RETURNING *', (error, results) => {
       if (error) {
           throw error
       }
@@ -62,6 +63,19 @@ exports.deleteUser = function(request, response) {
 }
 
 exports.enter = function(request, response) {
+  pool.query('SELECT id, uid, administrator FROM public."user" WHERE uid = \'' + request.body.uid + '\'', (error, results) => {
+    if (error) {
+        throw error
+    }
+    if (results.rows[0]) {
+      response.status(200).json({ info: 'success' }).send()
+    } else {
+      response.status(401).json({ info: 'not allowed' }).send()
+    }
+  });
+}
+
+/*exports.enter = function(request, response) {
   pool.query('SELECT id, uid, administrator FROM public."user" ORDER BY id ASC', (error, results) => {
     if (error) {
         throw error
@@ -70,17 +84,15 @@ exports.enter = function(request, response) {
       try {
         if(await bcrypt.compare(request.body.uid, row.uid)) {
           console.log(`${row.id} logged in`)
-
-          /* write message on the MQTT queue: TO DO */
-  
           response.status(200).json({ info: 'success' }).send()
         } else {
           console.log(`${row.id} not allowed`)
-          response.status(401).json({ info: 'not allowed' }).send()
+          
         }
       } catch (err) {
         response.status(500).send("Server error")
       }
     })
+    response.status(401).json({ info: 'not allowed' }).send()
   })
-}
+}*/
