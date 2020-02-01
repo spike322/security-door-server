@@ -8,23 +8,33 @@ var Pool = require('../../dbConnection');
 const pool = Pool.pool
 
 exports.createUser = async function(request, response) {
-  const administrator = (request.body.administrator == trueValue) ? true : false ;
-  const uid = request.body.uid;
+  const administrator = false; //const administrator = (request.body.administrator == trueValue) ? true : false ;
+  const admin = request.body.admin;
+  const newCard = request.body.newCard;
   var hashedUid
   
-  try {
+  /*try {
     const salt = await bcrypt.genSalt()
     hashedUid = await bcrypt.hash(request.body.uid, salt)
   } catch {
     response.status(500).send()
-  }
+  }*/
 
-  pool.query('INSERT INTO public."user" VALUES (\'' + uid + '\', DEFAULT, \'' + administrator + '\') RETURNING *', (error, results) => {
-      if (error) {
-          throw error
-      }
-      response.status(201).json({ info: `User added with ID: ${results.rows[0].id}` })
-  })
+  pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + admin + '\'', (error, results) => {
+    if (error) {
+      throw error
+    }
+    if (results.rows[0].administrator == true) {
+      pool.query('INSERT INTO public."user" VALUES (\'' + newCard + '\', DEFAULT, \'' + administrator + '\') RETURNING *', (error, results) => {
+          if (error) {
+              throw error
+          }
+          response.status(200).json({ info: `Added: ${newCard}` }).send()
+      });
+    } else {
+      response.status(401).json({ info: 'Not administrator!' }).send()
+    }
+  });
 }
 
 exports.getUsers = function(request, response) {

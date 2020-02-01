@@ -33,31 +33,26 @@ client.on('connect', function () {
         console.log('- Subscribed to topic: access/request')
       }
     })
-    client.subscribe('access/allowed', function (err) {
+    client.subscribe('access/response', function (err) {
       if (!err) {
-        console.log('- Subscribed to topic: access/allowed')
+        console.log('- Subscribed to topic: access/response')
       }
     })
-    client.subscribe('register/new', function (err) {
+    client.subscribe('register/request', function (err) {
       if (!err) {
-        console.log('- Subscribed to topic: register/new')
+        console.log('- Subscribed to topic: register/request')
       }
     })
-    client.subscribe('register/allowed', function (err) {
+    client.subscribe('register/response', function (err) {
       if (!err) {
-        console.log('- Subscribed to topic: register/allowed')
-      }
-    })
-    client.subscribe('register/denied', function (err) {
-      if (!err) {
-        console.log('- Subscribed to topic: register/denied')
+        console.log('- Subscribed to topic: register/response')
       }
     })
 });
 
 client.on('message', async function (topic, message) {
+  console.log(topic.toString() + ': ' + message.toString())
   if (topic === 'access/request') {
-    console.log(topic.toString() + ': ' + message.toString())
 
     request.post('http://localhost:3000/users/enter', {
       json: {
@@ -70,15 +65,29 @@ client.on('message', async function (topic, message) {
       }
       statusCode = body['info'].toString();
       console.log(`statusCode: ${statusCode}`)
-
-      if (statusCode === 'success') {
-        client.publish('access/allowed', statusCode)
-      } else if (statusCode === 'not allowed') {
-        client.publish('access/denied', statusCode)
-      }
+      
+      client.publish('access/response', statusCode)
     })
-  } else if (topic === 'register/new') {
-    
+  } else if (topic === 'register/request') {
+    const json = JSON.parse(message.toString());
+    const newCard = json.newCard;
+    const admin = json.admin;
+
+    request.post('http://localhost:3000/users', {
+      json: {
+        newCard: newCard,
+        admin: admin
+      }
+    }, (error, res, body) => {
+      if (error) {
+        console.error(error)
+        return
+      }
+      statusCode = body['info'].toString();
+      console.log(`statusCode: ${statusCode}`)
+
+      client.publish('register/response', statusCode)
+    })
   }
 });
 
