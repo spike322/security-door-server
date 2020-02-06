@@ -1,4 +1,8 @@
 const request = require('request')
+const TelegramBot = require('node-telegram-bot-api')
+const token = '1021113423:AAHhwOc6JSO3SZ0Mw9cYsSoo8uparSb8eE0'//process.env.BOT_TOKEN
+const chatId = 217441027//process.env.CHAT_ID
+const bot = new TelegramBot(token, {polling: true})
 var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000,
@@ -58,6 +62,11 @@ client.on('connect', function () {
         console.log('- Subscribed to topic: delete/response')
       }
     })
+    client.subscribe('emergency/lock', function (err) {
+      if (!err) {
+        console.log('- Subscribed to topic: emergency/lock')
+      }
+    })
 });
 
 client.on('message', async function (topic, message) {
@@ -74,6 +83,8 @@ client.on('message', async function (topic, message) {
       }
       statusCode = body['info'].toString();
       console.log(`statusCode: ${statusCode}`)
+
+      bot.sendMessage(chatId, 'Access attempt from: ' + message.toString() + '\nStatus: ' + statusCode)
       
       client.publish('access/response', statusCode)
     })
@@ -118,4 +129,8 @@ client.on('message', async function (topic, message) {
     })
   }
 });
+
+bot.onText(/\/lock/, (msg, match) => {
+  client.publish('emergency/lock', 'lock');
+})
 

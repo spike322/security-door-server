@@ -31,7 +31,7 @@ exports.createUser = async function(request, response) {
               response.status(200).json({ info: `Added: ${newCard}` })
           });
         } else {
-          response.status(401).json({ info: 'Not administrator!' })
+          response.status(401).json({ info: 'NOT ADMINISTRATOR!' })
         }
       });
     }
@@ -79,19 +79,28 @@ exports.deleteUser = function(request, response) {
   const uid = request.params.uid
   const admin = request.body.admin
 
-  pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + admin + '\'', (error, results) => {
+  pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + uid + '\'', (error, res) => {
     if (error) {
       throw error
     }
-    if (results && results.rows && results.rows[0] && results.rows[0].administrator !== undefined && results.rows[0].administrator === true) {
-      pool.query('DELETE FROM public."user" WHERE uid = \'' + uid + '\'', (error, results) => {
+    if (res && res.rows && res.rows[0] && res.rows[0].administrator !== undefined && (res.rows[0].administrator === true || res.rows[0].administrator === false)) {
+      pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + admin + '\'', (error, results) => {
         if (error) {
           throw error
         }
-        response.status(200).json({ info: `Deleted: ${uid}` }).send()
+        if (results && results.rows && results.rows[0] && results.rows[0].administrator !== undefined && results.rows[0].administrator === true) {
+          pool.query('DELETE FROM public."user" WHERE uid = \'' + uid + '\'', (error, results) => {
+            if (error) {
+              throw error
+            }
+            response.status(200).json({ info: `Deleted: ${uid}` }).send()
+          })
+        } else {
+          response.status(401).json({ info: 'NOT ADMINISTRATOR!' }).send()
+        }
       })
     } else {
-      response.status(401).json({ info: 'Not administrator!' }).send()
+      response.status(401).json({ info: 'USER DOES NOT EXIST!' })
     }
   })
 }
