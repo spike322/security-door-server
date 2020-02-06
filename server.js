@@ -48,12 +48,21 @@ client.on('connect', function () {
         console.log('- Subscribed to topic: register/response')
       }
     })
+    client.subscribe('delete/request', function (err) {
+      if (!err) {
+        console.log('- Subscribed to topic: delete/request')
+      }
+    })
+    client.subscribe('delete/response', function (err) {
+      if (!err) {
+        console.log('- Subscribed to topic: delete/response')
+      }
+    })
 });
 
 client.on('message', async function (topic, message) {
   console.log(topic.toString() + ': ' + message.toString())
   if (topic === 'access/request') {
-
     request.post('http://localhost:3000/users/enter', {
       json: {
         uid: message.toString()
@@ -87,6 +96,25 @@ client.on('message', async function (topic, message) {
       console.log(`statusCode: ${statusCode}`)
 
       client.publish('register/response', statusCode)
+    })
+  } else if (topic === 'delete/request') {
+    const json = JSON.parse(message.toString());
+    const uid = json.deleteUid;
+    const admin = json.admin;
+
+    request.delete('http://localhost:3000/users/'+uid, {
+      json: {
+        admin: admin
+      }
+    }, (error, res, body) => {
+      if (error) {
+        console.error(error)
+        return
+      }
+      statusCode = body['info'].toString();
+      console.log(`statusCode: ${statusCode}`)
+
+      client.publish('delete/response', statusCode)
     })
   }
 });

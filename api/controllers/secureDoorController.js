@@ -8,34 +8,48 @@ var Pool = require('../../dbConnection');
 const pool = Pool.pool
 
 exports.createUser = async function(request, response) {
-  const administrator = false; //const administrator = (request.body.administrator == trueValue) ? true : false ;
+  const administrator = false;
   const admin = request.body.admin;
   const newCard = request.body.newCard;
-  var hashedUid
-  
-  /*try {
-    const salt = await bcrypt.genSalt()
-    hashedUid = await bcrypt.hash(request.body.uid, salt)
-  } catch {
-    response.status(500).send()
-  }*/
 
-  pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + admin + '\'', (error, results) => {
+  pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + newCard + '\'', (error, res) => {
     if (error) {
       throw error
     }
-    if (results.rows[0].administrator == true) {
-      pool.query('INSERT INTO public."user" VALUES (\'' + newCard + '\', DEFAULT, \'' + administrator + '\') RETURNING *', (error, results) => {
-          if (error) {
-              throw error
-          }
-          response.status(200).json({ info: `Added: ${newCard}` }).send()
-      });
+    if (res && res.rows && res.rows[0] && res.rows[0].administrator !== undefined && (res.rows[0].administrator === true || res.rows[0].administrator === false)) {
+      response.status(401).json({ info: 'USER ALREADY EXISTS!' })
     } else {
-      response.status(401).json({ info: 'Not administrator!' }).send()
+      pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + admin + '\'', (error, results) => {
+        if (error) {
+          throw error
+        }
+        if (results && results.rows && results.rows[0] && results.rows[0].administrator !== undefined && results.rows[0].administrator === true) {
+          pool.query('INSERT INTO public."user" VALUES (\'' + newCard + '\', DEFAULT, \'' + administrator + '\') RETURNING *', (error, results) => {
+              if (error) {
+                  throw error
+              }
+              response.status(200).json({ info: `Added: ${newCard}` })
+          });
+        } else {
+          response.status(401).json({ info: 'Not administrator!' })
+        }
+      });
     }
   });
 }
+
+exports.createUserDebug = async function(request, response) {
+  const administrator = true;
+  const newCard = request.body.newCard;
+
+  pool.query('INSERT INTO public."user" VALUES (\'' + newCard + '\', DEFAULT, \'' + administrator + '\') RETURNING *', (error, results) => {
+      if (error) {
+          throw error
+      }
+      response.status(200).json({ info: `Added: ${newCard}` }).send()
+  });
+}
+
 
 exports.getUsers = function(request, response) {
   pool.query('SELECT id, uid, administrator FROM public."user" ORDER BY id ASC', (error, results) => {
@@ -62,13 +76,23 @@ exports.getUsersById = function(request, response) {
 }
 
 exports.deleteUser = function(request, response) {
-  const id = parseInt(request.params.id)
+  const uid = request.params.uid
+  const admin = request.body.admin
 
-  pool.query('DELETE FROM public."user" WHERE id = $1', [id], (error, results) => {
+  pool.query('SELECT id, administrator FROM public."user" WHERE uid = \'' + admin + '\'', (error, results) => {
     if (error) {
       throw error
     }
-    response.status(200).send(`User deleted with ID: ${id}`)
+    if (results && results.rows && results.rows[0] && results.rows[0].administrator !== undefined && results.rows[0].administrator === true) {
+      pool.query('DELETE FROM public."user" WHERE uid = \'' + uid + '\'', (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json({ info: `Deleted: ${uid}` }).send()
+      })
+    } else {
+      response.status(401).json({ info: 'Not administrator!' }).send()
+    }
   })
 }
 
