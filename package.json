@@ -9,16 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spike322/secure-door-server.git"
+    "url": "git+https://github.com/spike322/security-door-server.git"
   },
   "author": "Mauro Borrazzo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/spike322/secure-door-server/issues"
+    "url": "https://github.com/spike322/security-door-server/issues"
   },
-  "homepage": "https://github.com/spike322/secure-door-server#readme",
+  "homepage": "https://github.com/spike322/security-door-server#readme",
   "dependencies": {
-    "bcrypt": "^3.0.7",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
@@ -29,8 +28,7 @@
     "node-telegram-bot-api": "^0.40.0",
     "pg": "^7.15.1",
     "pug": "^2.0.4",
-    "request": "^2.88.0",
-    "telegram-send-message": "0.0.4"
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.2",

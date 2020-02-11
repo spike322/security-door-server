@@ -1,6 +1,5 @@
 'use strict';
 require('dotenv').config()
-const bcrypt = require('bcrypt');
 
 const trueValue = 'true';
 
@@ -117,25 +116,3 @@ exports.enter = function(request, response) {
     }
   });
 }
-
-/*exports.enter = function(request, response) {
-  pool.query('SELECT id, uid, administrator FROM public."user" ORDER BY id ASC', (error, results) => {
-    if (error) {
-        throw error
-    }
-    results.rows.forEach(async function(row) {
-      try {
-        if(await bcrypt.compare(request.body.uid, row.uid)) {
-          console.log(`${row.id} logged in`)
-          response.status(200).json({ info: 'success' }).send()
-        } else {
-          console.log(`${row.id} not allowed`)
-          
-        }
-      } catch (err) {
-        response.status(500).send("Server error")
-      }
-    })
-    response.status(401).json({ info: 'not allowed' }).send()
-  })
-}*/

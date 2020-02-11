@@ -1,7 +1,7 @@
 const request = require('request')
 const TelegramBot = require('node-telegram-bot-api')
-const token = '1021113423:AAHhwOc6JSO3SZ0Mw9cYsSoo8uparSb8eE0'//process.env.BOT_TOKEN
-const chatId = 217441027//process.env.CHAT_ID
+const token = '1021113423:AAHhwOc6JSO3SZ0Mw9cYsSoo8uparSb8eE0'
+const chatId = 217441027
 const bot = new TelegramBot(token, {polling: true})
 var express = require('express'),
   app = express(),
@@ -11,9 +11,8 @@ var express = require('express'),
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-var routes = require('./api/routes/secureDoorRoutes'); //importing route
-routes(app); //register the route
+var routes = require('./api/routes/secureDoorRoutes');
+routes(app);
 
 
 app.listen(port);
