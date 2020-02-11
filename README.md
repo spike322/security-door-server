@@ -5,7 +5,7 @@ Secure Door is an IoT application built with Arduino. This is the server for the
 
 Clone the server by using the git clone command
 
-    git clone https://github.com/spike322/secure-door-server.git
+    git clone https://github.com/spike322/security-door-server.git
   
 Then move to the project folder and run this command to start the server
 
